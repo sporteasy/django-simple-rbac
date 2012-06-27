@@ -1,7 +1,7 @@
 from django.template import Library
 from django.template.base import Node, NodeList, VariableDoesNotExist
 from django.template.defaulttags import TemplateLiteral
-from sporteasy.apps.acl.helpers import is_allowed
+from django_simple_rbac.helpers import is_allowed
 
 
 register = Library()

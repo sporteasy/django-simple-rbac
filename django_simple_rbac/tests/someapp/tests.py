@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.test.client import Client, RequestFactory
 
 
-class AclTest(TestCase):
+class AclTestCase(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -20,11 +20,12 @@ class AclTest(TestCase):
         response = client.get('/post/list')
         self._test_permission_granted(response)
 
-#        # test view
-#        response = client.get('/post/view')
-#        self._test_permission_granted(response)
-#
-#        # test update
-#        response = client.get('/post/update')
-#        self._test_permission_denied(response)
+        # test view
+        response = client.get('/post/view')
+        self._test_permission_granted(response)
+
+        # test update
+        response = client.get('/post/update')
+        self._test_permission_denied(response)
+        
 

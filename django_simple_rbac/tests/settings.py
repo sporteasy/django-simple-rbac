@@ -100,7 +100,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'acl.middleware.ACLMiddleware'
+    'django_simple_rbac.middleware.ACLMiddleware'
 )
 
 ROOT_URLCONF = 'urls'
@@ -122,9 +122,15 @@ INSTALLED_APPS = (
 #    'django.contrib.sites',
 #    'django.contrib.messages',
 #    'django.contrib.staticfiles',
-    'acl',
+    'django_simple_rbac',
     'someapp'
 )
+
+from django_simple_rbac.conf import registry
+ACL_AUTHORITIES = (
+    registry('forum', 'acl/registry3.yaml', direct_allow=True),
+)
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

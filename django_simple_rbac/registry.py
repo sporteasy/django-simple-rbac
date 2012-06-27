@@ -63,18 +63,7 @@ def _get_acl_registry(authority, request):
         registry[0].add_role('__current__', parents=roles)
         return registry
     except Exception as e:
-        return None
-
-
-def _get_authorities_from_request(request):
-    """
-    """
-    authorities = []
-
-    # test offer
-    # authorities.append(OfferAuthority())
-
-
+        return None, False, False
 
 
 class Adapter(object):

@@ -1,8 +1,9 @@
 from django.dispatch import receiver
-from acl.signals import filter_authorities
+from django_simple_rbac.signals import filter_authorities
 
 
 class ForumAuthority(object):
+    acl_registry_name = 'forum'
     def get_acl_roles(self, request):
         known_users = {
             'karl': ['member'],

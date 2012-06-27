@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
-from acl.decorators import require_privilege
-from acl.views import AclViewMixin
+from django_simple_rbac.decorators import require_privilege
+from django_simple_rbac.views import AclViewMixin
 
 
 class ListPostView(AclViewMixin, TemplateView):
