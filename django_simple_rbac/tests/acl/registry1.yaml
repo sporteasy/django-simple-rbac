@@ -1,0 +1,16 @@
+roles:
+    - { name: anonymous }
+    - { name: member, parents: [anonymous] }
+    - { name: moderator, parents: [member] }
+    - { name: admin, parents: [moderator] }
+
+resources:
+    - { name: post }
+    - { name: member }
+
+rules:
+    - { type: allow, roles: [anonymous], resources: [post], operations: [list, view] }
+    - { type: allow, roles: [member], resources: [post], operations: [create] }
+    - { type: allow, roles: [member], resources: [member], operations: [list, view] }
+    - { type: allow, roles: [moderator], resources: [post], operations: [update, delete] }
+    - { type: allow, roles: [admin], resources: [member], operations: [update, delete] }
