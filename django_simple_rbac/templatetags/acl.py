@@ -38,18 +38,18 @@ class IfIsAllowedNode(Node):
 
     def render(self, context):
         for check, nodelist in self.checks_nodelists:
-
+            context['authority'] = None
             if check is not None:           # ifisallowed / elifisallowed clause
                 try:
                     operation, resource = check
                     match = is_allowed(context['request'], operation.eval(context), resource.eval(context))
+
+                    # add authority to template context
+                    context['authority'] = match.authority
                 except VariableDoesNotExist:
                     match = None
             else:                               # else clause
                 match = True
-
-            # add authority to template context
-            context['authority'] = match.authority
 
             if match:
                 return nodelist.render(context)
