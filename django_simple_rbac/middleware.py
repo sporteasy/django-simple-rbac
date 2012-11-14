@@ -9,7 +9,8 @@ class ACLMiddleware(object):
         response = TemplateResponse(request, template_name, {
             'operation': operation,
             'resource': resource,
-            'authority': authority
+            'authority': authority,
+            'status_code': '403'
         })
         response.status_code = 403
         return response
