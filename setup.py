@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='django-simple-rbac',
-    version='0.1.0',
+    version='0.1.1',
     author='SportEasy',
     author_email='contact@sporteasy.fr',
     packages=['django_simple_rbac'],
