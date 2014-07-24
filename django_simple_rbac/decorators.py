@@ -1,9 +1,8 @@
-def require_privilege(operation, resource, template_403_name=None):
+def require_privilege(operation, resource):
     def decorator(function):
         function.required_privilege = {
             'operation': operation,
-            'resource': resource,
-            'template_403_name': template_403_name,
+            'resource': resource
         }
         return function
     return decorator

@@ -1,5 +1,6 @@
 from django.template.response import TemplateResponse
 from .helpers import is_allowed, Http403Exception
+from .utils import get_class
 
 
 class ACLMiddleware(object):
@@ -25,12 +26,14 @@ class ACLMiddleware(object):
             if granted:
                 return None
 
-            if privilege.get('template_403_name') is not None:
-                template_name = privilege['template_403_name']
-            else:
-                # tricky hack to retrieve original view class
-                view_class = view_func.func_closure[1].cell_contents
-                template_name = getattr(view_class, 'template_403_name', None)
+            # dynamically import the class to fetch the associated template_403_name
+            view_class = get_class(view_func.__module__, view_func.__name__)
+            template_name = getattr(view_class, 'template_403_name', None)
+
+            # if specific authority template is defined, use it
+            authorities_template_names = getattr(view_class, 'authorities_template_names', None)
+            if authorities_template_names:
+                template_name = authorities_template_names.get(granted.authority, template_name)
 
             # Finally deny access. We have to return a response here because any raised exception wouldn't be caught
             # by process_exception method (it catches exceptions only when they are raised by a view)
@@ -48,6 +51,12 @@ class ACLMiddleware(object):
         if hasattr(exception, 'view'):
             if hasattr(exception.view, 'template_403_name'):
                 kwargs['template_name'] = exception.view.template_403_name
+
+            # if specific authority template is defined, use it
+            if hasattr(exception.view, 'authorities_template_names'):
+                if hasattr(exception, 'authority') and exception.view.authorities_template_names.get(exception.authority):
+                    kwargs['template_name'] = exception.view.authorities_template_names.get(exception.authority)
+
         if hasattr(exception, 'authority'):
             kwargs['authority'] = exception.authority
         return self._create_403_response(request, exception.operation, exception.resource,
