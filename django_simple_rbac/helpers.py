@@ -44,10 +44,11 @@ def is_allowed(request, operation, resource, authorities=None):
 
 
 class Http403Exception(Exception):
-    def __init__(self, operation, resource, view=None, authority=None, *args, **kwargs):
+    def __init__(self, operation, resource, view=None, authority=None, message=None, *args, **kwargs):
         super(Http403Exception, self).__init__(*args, **kwargs)
         self.operation = operation
         self.resource = resource
+        self.message = message
         if view:
             self.view = view
         if authority:

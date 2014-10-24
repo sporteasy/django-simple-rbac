@@ -4,12 +4,13 @@ from .helpers import is_allowed, Http403Exception
 
 class ACLMiddleware(object):
 
-    def _create_403_response(self, request, operation, resource, authority=None, template_name=None):
+    def _create_403_response(self, request, operation, resource, authority=None, template_name=None, message=None):
         template_name = template_name or '403.html'
         response = TemplateResponse(request, template_name, {
             'operation': operation,
             'resource': resource,
             'authority': authority,
+            'message': message,
             'status_code': '403'
         })
         response.status_code = 403
@@ -34,7 +35,7 @@ class ACLMiddleware(object):
             # Finally deny access. We have to return a response here because any raised exception wouldn't be caught
             # by process_exception method (it catches exceptions only when they are raised by a view)
             return self._create_403_response(request, privilege['operation'], privilege['resource'],
-                authority=granted.authority, template_name=template_name)
+                                             authority=granted.authority, template_name=template_name)
 
     def process_exception(self, request, exception):
         """
@@ -49,4 +50,5 @@ class ACLMiddleware(object):
                 kwargs['template_name'] = exception.view.template_403_name
         if hasattr(exception, 'authority'):
             kwargs['authority'] = exception.authority
-        return self._create_403_response(request, exception.operation, exception.resource, **kwargs)
+        return self._create_403_response(request, exception.operation, exception.resource,
+                                         message=exception.message, **kwargs)
