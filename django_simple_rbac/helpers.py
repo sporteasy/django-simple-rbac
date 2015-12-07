@@ -38,6 +38,8 @@ def is_allowed(request, operation, resource, authorities=None):
                 # the resource is probably unknown by this registry, but it would be nice
                 # to have information about it in a debug panel.
                 pass
+        elif direct_deny:
+            return Permission(False, authority.acl_registry_name)
 
     # is we reach this point, permission is denied
     return Permission(False)

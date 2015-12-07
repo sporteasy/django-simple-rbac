@@ -66,20 +66,20 @@ def _get_roles_from_authority(authority, request):
         authority_key = (authority.acl_registry_name, authority.id)
     except:
         authority_key = (authority.acl_registry_name,)
-    if not authority_key in request._cached_rbac_roles:
+    if authority_key not in request._cached_rbac_roles:
         request._cached_rbac_roles[authority_key] = authority.get_acl_roles(request) or []  # get roles from authority
     return request._cached_rbac_roles[authority_key]
 
 
 def _get_acl_registry(authority, request):
+    registry, direct_allow, direct_deny = copy.deepcopy(registries[authority.acl_registry_name])
     try:
-        registry = copy.deepcopy(registries[authority.acl_registry_name])
         roles =_get_roles_from_authority(authority, request)
         # dynamically add a special __current__ role
-        registry[0].add_role('__current__', parents=roles)
-        return registry
+        registry.add_role('__current__', parents=roles)
+        return registry, direct_allow, direct_deny
     except Exception as e:
-        return None, False, False
+        return None, direct_allow, direct_deny
 
 
 class Adapter(object):
