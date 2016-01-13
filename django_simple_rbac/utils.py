@@ -1,9 +1,9 @@
-from django.utils import importlib
+from importlib import import_module
 
 
 def get_class(module_name, cls_name):
     try:
-        module = importlib.import_module(module_name)
+        module = import_module(module_name)
     except ImportError:
         raise ImportError('Invalid class path: {}'.format(module_name))
     try:
