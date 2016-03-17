@@ -15,7 +15,7 @@ def is_allowed(request, operation, resource, authorities=None):
     # we have no predefined authorities (which is the most common case)
     if not authorities:
         try:
-            authorities = resource.acl_authorities
+            authorities = list(resource.acl_authorities)
         except AttributeError as e:
             authorities = []
 
