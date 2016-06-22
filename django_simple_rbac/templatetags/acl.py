@@ -98,3 +98,16 @@ def do_if_is_allowed(parser, token):
     assert token.contents == 'endifisallowed'
 
     return IfIsAllowedNode(checks_nodelists)
+
+
+@register.simple_tag(takes_context=True)
+def isallowed(context, operation, resource):
+    """
+    Useful when you want to store ACL result in a variable to be tested with other parameters. For example :
+
+    {% isallowed "my_operation" my_resource as can_do_operation %}
+    {% if my_resource.some_boolean or can_do_operation %}
+        Display stuff
+    {% endif %}
+    """
+    return is_allowed(context['request'], operation, resource)
