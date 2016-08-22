@@ -101,7 +101,7 @@ def do_if_is_allowed(parser, token):
 
 
 @register.simple_tag(takes_context=True)
-def isallowed(context, operation, resource):
+def isallowed(context, operation, resource, authority=None):
     """
     Useful when you want to store ACL result in a variable to be tested with other parameters. For example :
 
@@ -110,4 +110,5 @@ def isallowed(context, operation, resource):
         Display stuff
     {% endif %}
     """
-    return is_allowed(context['request'], operation, resource)
+    authorities = [authority] if authority else None
+    return is_allowed(context['request'], operation, resource, authorities)
