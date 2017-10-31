@@ -1,4 +1,4 @@
-from .registry import _get_acl_registry, ResourceAdapter, CurrentRoleAdapter, Permission
+from .registry import _get_acl_registry, _create_reason, ResourceAdapter, CurrentRoleAdapter, Permission
 from .signals import filter_authorities
 
 
@@ -33,7 +33,9 @@ def is_allowed(request, operation, resource, authorities=None):
                     if direct_allow:
                         return Permission(True, authority.acl_registry_name)
                 elif direct_deny:
-                    return Permission(False, authority.acl_registry_name)
+                    reason = _create_reason(authority, request, list(registry._roles['__current__']),
+                                            operation, resource, False)
+                    return Permission(False, authority.acl_registry_name, reason)
             except Exception as e:
                 # the resource is probably unknown by this registry, but it would be nice
                 # to have information about it in a debug panel.

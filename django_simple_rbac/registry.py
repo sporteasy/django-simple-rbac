@@ -82,6 +82,14 @@ def _get_acl_registry(authority, request):
         return None, False, False
 
 
+def _create_reason(authority, request, roles, operation, resource, is_allowed):
+    try:
+        reason = authority.create_reason(request, roles, operation, resource, is_allowed)
+    except AttributeError:
+        reason = None
+    return reason
+
+
 class Adapter(object):
 
     def __init__(self, adaptee):
@@ -113,9 +121,10 @@ class CurrentRoleAdapter(Adapter):
 
 
 class Permission(object):
-    def __init__(self, granted=False, authority=None):
+    def __init__(self, granted=False, authority=None, reason=None):
         self.granted = granted
         self.authority = authority
+        self.reason = reason
 
     def __nonzero__(self):
         return bool(self.granted)
