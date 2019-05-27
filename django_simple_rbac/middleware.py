@@ -1,9 +1,10 @@
 from django.template.response import TemplateResponse
+from django.utils.deprecation import MiddlewareMixin
 from .helpers import is_allowed, Http403Exception
 from .utils import get_class
 
 
-class ACLMiddleware(object):
+class ACLMiddleware(MiddlewareMixin):
 
     def _create_403_response(self, request, operation, resource, authority=None, template_name=None, message=None):
         template_name = template_name or '403.html'
