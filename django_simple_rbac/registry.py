@@ -11,7 +11,7 @@ registries = {}
 
 def load_registry_from_yaml(filename):
     with file(filename, "r") as f:
-        config = yaml.load(f)
+        config = yaml.load(f, Loader=yaml.FullLoader)
         registry = rbac.acl.Registry()
 
         # load roles
