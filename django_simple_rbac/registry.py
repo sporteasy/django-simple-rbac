@@ -55,6 +55,13 @@ def load_registry_from_yaml(filename):
     return registry
 
 
+def _get_authority_key(authority):
+    try:
+        return authority.acl_registry_name, authority.id
+    except AttributeError:
+        return authority.acl_registry_name
+
+
 def _get_roles_from_authority(authority, request):
     """
     Returns a list of roles for the given request, in the given authority context.
@@ -62,22 +69,33 @@ def _get_roles_from_authority(authority, request):
     """
     if not hasattr(request, '_cached_rbac_roles'):
         request._cached_rbac_roles = {}
-    try:
-        authority_key = (authority.acl_registry_name, authority.id)
-    except:
-        authority_key = (authority.acl_registry_name,)
+
+    authority_key = _get_authority_key(authority)
+
     if not authority_key in request._cached_rbac_roles:
         request._cached_rbac_roles[authority_key] = authority.get_acl_roles(request) or []  # get roles from authority
+
     return request._cached_rbac_roles[authority_key]
 
 
 def _get_acl_registry(authority, request):
+    """
+    Returns the ACL registry for the given request, in the given authority context.
+    Registries are cached in the request object for improved performance.
+    """
     try:
-        registry = copy.deepcopy(registries[authority.acl_registry_name])
-        roles =_get_roles_from_authority(authority, request)
-        # dynamically add a special __current__ role
-        registry[0].add_role('__current__', parents=roles)
-        return registry
+        if not hasattr(request, '_cached_rbac_registries'):
+            request._cached_rbac_registries = {}
+
+        authority_key = _get_authority_key(authority)
+
+        if not authority_key in request._cached_rbac_registries:
+            registry = copy.deepcopy(registries[authority.acl_registry_name])
+            roles =_get_roles_from_authority(authority, request)
+            registry[0].add_role('__current__', parents=roles)  # dynamically add a special __current__ role
+            request._cached_rbac_registries[authority_key] = registry
+
+        return request._cached_rbac_registries[authority_key]
     except Exception as e:
         return None, False, False
 
