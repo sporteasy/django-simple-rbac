@@ -3,14 +3,27 @@ from .signals import filter_authorities
 
 
 def is_allowed(request, operation, resource, authorities=None):
+    # wrap resource
+    wrapped_resource = resource if isinstance(resource, ResourceAdapter) else ResourceAdapter(resource)
+
+    if authorities:
+        return _is_allowed(request, operation, wrapped_resource, authorities)
+
+    if not hasattr(request, '_cached_permissions'):
+        request._cached_permissions = {}
+
+    key = "::".join([str(operation), str(resource)])
+    if key not in request._cached_permissions:
+        request._cached_permissions[key] = _is_allowed(request, operation, wrapped_resource)
+    return request._cached_permissions[key]
+
+
+def _is_allowed(request, operation, resource, authorities=None):
     """
     is_allowed(request, 'update', resource_instance)
     is_allowed(request, 'update', 'resource_name')
     is_allowed(request, 'update', resource_instance, authorities)
     """
-
-    # wrap resource
-    resource = resource if isinstance(resource, ResourceAdapter) else ResourceAdapter(resource)
 
     # we have no predefined authorities (which is the most common case)
     if not authorities:
