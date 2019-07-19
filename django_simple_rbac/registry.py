@@ -2,7 +2,7 @@ import copy
 import rbac.acl
 import yaml
 from django.conf import settings
-
+from django.utils.functional import cached_property
 
 STRATEGY_FILTER = 'filter'
 STRATEGY_DIRECT_DENY = 'deny'
@@ -105,8 +105,13 @@ class Adapter(object):
     def __init__(self, adaptee):
         self.adaptee = adaptee
 
-    def __hash__(self):
+    @cached_property
+    def _hash(self):
+        """We want to cache the hash because it won't change over time."""
         return hash(str(self))
+
+    def __hash__(self):
+        return self._hash
 
     def __eq__(self, other):
         return str(other) == str(self)
@@ -114,8 +119,13 @@ class Adapter(object):
 
 class ResourceAdapter(Adapter):
 
-    def __str__(self):
+    @cached_property
+    def _str(self):
+        """We want to cache this because it won't change over time."""
         return self.adaptee if isinstance(self.adaptee, basestring) else self.adaptee.acl_resource_name
+
+    def __str__(self):
+        return self._str
 
     @property
     def acl_authorities(self):
