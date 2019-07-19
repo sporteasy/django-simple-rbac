@@ -22,13 +22,14 @@ def is_allowed(request, operation, resource, authorities=None):
     # apply filters on authority list
     filter_authorities.send(sender=None, authorities=authorities, request=request, operation=operation, resource=resource)
 
+    # the request is wrapped and become the special '__current__' role
+    current_role = CurrentRoleAdapter(request)
+
     # check permissions on each authority
     for authority in authorities:
         registry, direct_allow, direct_deny = _get_acl_registry(authority, request)
         if registry:
             try:
-                # the request is wrapped and become the special '__current__' role
-                current_role = CurrentRoleAdapter(request)
                 if registry.is_allowed(current_role, operation, resource):
                     if direct_allow:
                         return Permission(True, authority.acl_registry_name)
