@@ -10,7 +10,7 @@ registries = {}
 
 
 def load_registry_from_yaml(filename):
-    with file(filename, "r") as f:
+    with open(filename, "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
         registry = rbac.acl.Registry()
 
@@ -40,7 +40,7 @@ def load_registry_from_yaml(filename):
                                 assertion = None
                                 if 'assertion' in rule:
                                     [module_name, function_name] = rule['assertion'].rsplit('.', 1)
-                                    _module = __import__(module_name, globals(), locals(), [function_name], -1)
+                                    _module = __import__(module_name, globals(), locals(), [function_name], 0)
                                     assertion = getattr(_module, function_name)
                                 args = (role, operation, resource, assertion)
                                 if rule['type'] == 'allow':
@@ -122,7 +122,7 @@ class ResourceAdapter(Adapter):
     @cached_property
     def _str(self):
         """We want to cache this because it won't change over time."""
-        return self.adaptee if isinstance(self.adaptee, basestring) else self.adaptee.acl_resource_name
+        return self.adaptee if isinstance(self.adaptee, str) else self.adaptee.acl_resource_name
 
     def __str__(self):
         return self._str
@@ -145,7 +145,7 @@ class Permission(object):
         self.granted = granted
         self.authority = authority
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.granted)
 
 
