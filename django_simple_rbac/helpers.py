@@ -7,6 +7,8 @@ def is_allowed(request, operation, resource, authorities=None):
     # wrap resource
     wrapped_resource = resource if isinstance(resource, ResourceAdapter) else ResourceAdapter(resource)
 
+    operation = str(operation)
+
     if authorities:
         return _is_allowed(request, operation, wrapped_resource, authorities)
 

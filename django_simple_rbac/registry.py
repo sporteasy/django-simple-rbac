@@ -105,7 +105,10 @@ def _get_acl_registry(authority, request):
 class Adapter(object):
 
     def __init__(self, adaptee):
-        self.adaptee = adaptee
+        try:
+            self.adaptee = str(adaptee.strip())
+        except AttributeError:
+            self.adaptee = adaptee
 
     @cached_property
     def _hash(self):
@@ -124,7 +127,10 @@ class ResourceAdapter(Adapter):
     @cached_property
     def _str(self):
         """We want to cache this because it won't change over time."""
-        return self.adaptee if isinstance(self.adaptee, str) else self.adaptee.acl_resource_name
+        try:
+            return str(self.adaptee.acl_resource_name)
+        except AttributeError:
+            return self.adaptee
 
     def __str__(self):
         return self._str
