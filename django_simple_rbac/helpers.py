@@ -1,3 +1,4 @@
+from builtins import str
 from .registry import _get_acl_registry, ResourceAdapter, CurrentRoleAdapter, Permission
 from .signals import filter_authorities
 

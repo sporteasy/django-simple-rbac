@@ -1,3 +1,4 @@
+from builtins import object
 from .helpers import is_allowed, Http403Exception
 
 

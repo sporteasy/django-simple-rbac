@@ -1,3 +1,4 @@
+from builtins import object
 from django.dispatch import receiver
 from django_simple_rbac.signals import filter_authorities
 

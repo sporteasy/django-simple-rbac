@@ -1,3 +1,4 @@
+from builtins import object
 from django.template import Library
 from django.template.base import Node, NodeList, VariableDoesNotExist
 from django.template.defaulttags import TemplateLiteral
