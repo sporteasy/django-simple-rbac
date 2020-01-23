@@ -1,5 +1,4 @@
 from builtins import str
-from past.builtins import basestring
 from builtins import object
 import copy
 import rbac.acl
@@ -125,7 +124,7 @@ class ResourceAdapter(Adapter):
     @cached_property
     def _str(self):
         """We want to cache this because it won't change over time."""
-        return self.adaptee if isinstance(self.adaptee, basestring) else self.adaptee.acl_resource_name
+        return self.adaptee if isinstance(self.adaptee, str) else self.adaptee.acl_resource_name
 
     def __str__(self):
         return self._str
