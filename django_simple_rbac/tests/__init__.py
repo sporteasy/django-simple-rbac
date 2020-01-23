@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 from os import path
 from django.test.testcases import TestCase
 from ..registry import load_registry_from_yaml
-from models import Member, Moderator, Admin, ResourceAdapter, RoleAdapter
+from .models import Member, Moderator, Admin, ResourceAdapter, RoleAdapter
 
 
 class RegistryTestCase(TestCase):
