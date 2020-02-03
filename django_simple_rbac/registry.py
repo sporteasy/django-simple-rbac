@@ -3,6 +3,7 @@ from builtins import object
 import copy
 import rbac.acl
 import yaml
+from importlib import import_module
 from django.conf import settings
 from django.utils.functional import cached_property
 
@@ -41,8 +42,8 @@ def load_registry_from_yaml(filename):
                             for operation in rule['operations']:
                                 assertion = None
                                 if 'assertion' in rule:
-                                    [module_name, function_name] = rule['assertion'].rsplit('.', 1)
-                                    _module = __import__(module_name, globals(), locals(), [function_name], -1)
+                                    module_name, function_name = rule['assertion'].rsplit('.', 1)
+                                    _module = import_module(module_name)
                                     assertion = getattr(_module, function_name)
                                 args = (role, operation, resource, assertion)
                                 if rule['type'] == 'allow':
