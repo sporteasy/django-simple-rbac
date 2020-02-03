@@ -12,7 +12,7 @@ registries = {}
 
 
 def load_registry_from_yaml(filename):
-    with file(filename, "r") as f:
+    with open(filename, "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
         registry = rbac.acl.Registry()
 
