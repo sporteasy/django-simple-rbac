@@ -1,4 +1,5 @@
 from django.dispatch import Signal
 
 
-filter_authorities = Signal(providing_args=['authorities', 'request', 'operation', 'resource'])
+# args=['authorities', 'request', 'operation', 'resource']
+filter_authorities = Signal()
